@@ -1,4 +1,4 @@
-# --copyright
+#-- copyright
 # OpenProject is an open source project management software.
 # Copyright (C) the OpenProject GmbH
 #
@@ -24,26 +24,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 # See COPYRIGHT and LICENSE files for more details.
-# ++
+#++
 
-require_relative "../../lib_static/open_project/feature_decisions"
+FactoryBot.define do
+  factory :project_stage, class: "::Projects::Stage" do
+    sequence(:name) { |n| "Stage No. #{n}" }
+    start_date { Date.current - 2.days }
+    end_date { Date.current + 2.days }
+  end
 
-# Add feature flags here via e.g.
-#
-#   OpenProject::FeatureDecisions.add :some_flag
-#
-# If the feature to be flag-guarded stems from a module, add an initializer
-# to that module's engine:
-#
-#   initializer 'the_engine.feature_decisions' do
-#     OpenProject::FeatureDecisions.add :some_flag
-#   end
-
-OpenProject::FeatureDecisions.add :primerized_work_package_activities
-OpenProject::FeatureDecisions.add :built_in_oauth_applications,
-                                  description: "Allows the display and use of built-in OAuth applications."
-
-OpenProject::FeatureDecisions.add :custom_field_of_type_hierarchy,
-                                  description: "Allows the use of the custom field type 'Hierarchy'."
-OpenProject::FeatureDecisions.add :stages_and_gates,
-                                  description: "Enables the under construction feature of stages and gates."
+  factory :project_gate, class: "::Projects::Gate" do
+    sequence(:name) { |n| "Gate No. #{n}" }
+    date { Date.current + 2.days }
+  end
+end

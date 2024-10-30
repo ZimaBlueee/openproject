@@ -1,4 +1,4 @@
-# --copyright
+#-- copyright
 # OpenProject is an open source project management software.
 # Copyright (C) the OpenProject GmbH
 #
@@ -24,26 +24,34 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 # See COPYRIGHT and LICENSE files for more details.
-# ++
+#++
 
-require_relative "../../lib_static/open_project/feature_decisions"
+require "rails_helper"
+require "support/shared/projects_life_cycle_helpers"
 
-# Add feature flags here via e.g.
-#
-#   OpenProject::FeatureDecisions.add :some_flag
-#
-# If the feature to be flag-guarded stems from a module, add an initializer
-# to that module's engine:
-#
-#   initializer 'the_engine.feature_decisions' do
-#     OpenProject::FeatureDecisions.add :some_flag
-#   end
+RSpec.describe Projects::Gate do
+  it_behaves_like "a Projects::LifeCycle event"
 
-OpenProject::FeatureDecisions.add :primerized_work_package_activities
-OpenProject::FeatureDecisions.add :built_in_oauth_applications,
-                                  description: "Allows the display and use of built-in OAuth applications."
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:date) }
 
-OpenProject::FeatureDecisions.add :custom_field_of_type_hierarchy,
-                                  description: "Allows the use of the custom field type 'Hierarchy'."
-OpenProject::FeatureDecisions.add :stages_and_gates,
-                                  description: "Enables the under construction feature of stages and gates."
+    it "is invalid if `start_date` is present" do
+      gate_with_start_date = build(:project_gate, start_date: Time.zone.today)
+
+      expect(gate_with_start_date).not_to be_valid
+      expect(gate_with_start_date.errors[:base]).to include("Cannot assign `start_date` or `end_date` to a Gate")
+    end
+
+    it "is invalid if `end_date` is present" do
+      gate_with_end_date = build(:project_gate, end_date: Time.zone.today)
+
+      expect(gate_with_end_date).not_to be_valid
+      expect(gate_with_end_date.errors[:base]).to include("Cannot assign `start_date` or `end_date` to a Gate")
+    end
+
+    it "is valid if neither `start_date` nor `end_date` are present" do
+      valid_gate = build(:project_gate)
+      expect(valid_gate).to be_valid
+    end
+  end
+end

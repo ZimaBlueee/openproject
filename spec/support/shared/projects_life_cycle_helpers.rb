@@ -1,4 +1,4 @@
-# --copyright
+#-- copyright
 # OpenProject is an open source project management software.
 # Copyright (C) the OpenProject GmbH
 #
@@ -24,26 +24,23 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 # See COPYRIGHT and LICENSE files for more details.
-# ++
+#++
 
-require_relative "../../lib_static/open_project/feature_decisions"
+RSpec.shared_examples_for "a Projects::LifeCycle event" do
+  it "inherits from Projects::LifeCycle" do
+    expect(described_class < Projects::LifeCycle).to be true
+  end
 
-# Add feature flags here via e.g.
-#
-#   OpenProject::FeatureDecisions.add :some_flag
-#
-# If the feature to be flag-guarded stems from a module, add an initializer
-# to that module's engine:
-#
-#   initializer 'the_engine.feature_decisions' do
-#     OpenProject::FeatureDecisions.add :some_flag
-#   end
+  describe "validations" do
+    it { is_expected.to belong_to(:project) }
+    it { is_expected.to have_many(:work_packages) }
+    it { is_expected.to validate_presence_of(:name) }
 
-OpenProject::FeatureDecisions.add :primerized_work_package_activities
-OpenProject::FeatureDecisions.add :built_in_oauth_applications,
-                                  description: "Allows the display and use of built-in OAuth applications."
-
-OpenProject::FeatureDecisions.add :custom_field_of_type_hierarchy,
-                                  description: "Allows the use of the custom field type 'Hierarchy'."
-OpenProject::FeatureDecisions.add :stages_and_gates,
-                                  description: "Enables the under construction feature of stages and gates."
+    it "is invalid if type is not Stage or Gate" do
+      life_cycle = described_class.new
+      life_cycle.type = "InvalidType"
+      expect(life_cycle).not_to be_valid
+      expect(life_cycle.errors[:type]).to include("must be either Stage or Gate")
+    end
+  end
+end

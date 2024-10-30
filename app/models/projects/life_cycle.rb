@@ -1,4 +1,4 @@
-# --copyright
+#-- copyright
 # OpenProject is an open source project management software.
 # Copyright (C) the OpenProject GmbH
 #
@@ -24,26 +24,21 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 # See COPYRIGHT and LICENSE files for more details.
-# ++
+#++
 
-require_relative "../../lib_static/open_project/feature_decisions"
+class Projects::LifeCycle < ApplicationRecord
+  belongs_to :project
+  has_many :work_packages, dependent: :nullify
 
-# Add feature flags here via e.g.
-#
-#   OpenProject::FeatureDecisions.add :some_flag
-#
-# If the feature to be flag-guarded stems from a module, add an initializer
-# to that module's engine:
-#
-#   initializer 'the_engine.feature_decisions' do
-#     OpenProject::FeatureDecisions.add :some_flag
-#   end
+  validates :name, presence: true
+  validates :type, inclusion: { in: %w[Projects::Stage Projects::Gate], message: :must_be_a_stage_or_gate }
 
-OpenProject::FeatureDecisions.add :primerized_work_package_activities
-OpenProject::FeatureDecisions.add :built_in_oauth_applications,
-                                  description: "Allows the display and use of built-in OAuth applications."
+  def initialize(*args)
+    if instance_of? Projects::LifeCycle
+      # Do not allow directly instantiating this class
+      raise NotImplementedError, "Cannot instantiate the base Projects::LifeCycle class directly."
+    end
 
-OpenProject::FeatureDecisions.add :custom_field_of_type_hierarchy,
-                                  description: "Allows the use of the custom field type 'Hierarchy'."
-OpenProject::FeatureDecisions.add :stages_and_gates,
-                                  description: "Enables the under construction feature of stages and gates."
+    super
+  end
+end
