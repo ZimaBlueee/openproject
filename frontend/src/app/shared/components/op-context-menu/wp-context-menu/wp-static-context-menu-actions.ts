@@ -8,10 +8,10 @@ export const PERMITTED_CONTEXT_MENU_ACTIONS:WorkPackageAction[] = [
     icon: 'icon-clipboard',
     link: 'id',
   },
-  {
-    key: 'log_time',
-    link: 'logTime',
-  },
+  // {
+  //   key: 'log_time',
+  //   link: 'logTime',
+  // },
   {
     key: 'change_project',
     icon: 'icon-move',
