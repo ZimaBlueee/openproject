@@ -34,7 +34,7 @@ module OpenProject::TextFormatting
 
         Sanitize::Config.merge(
           base,
-          elements: base[:elements] + %w[macro mention],
+          elements: base[:elements] + %w[macro mention input label ul li],
 
           attributes: base[:attributes].deep_merge(
             # Whitelist class and data-* attributes on all macros
@@ -44,11 +44,17 @@ module OpenProject::TextFormatting
             # add styles to tables
             "figure" => %w[class style],
             # allow inline image styles
-            "img" => %w[src alt longdesc style],
-            "table" => ["style"],
-            "th" => ["style"],
-            "tr" => ["style"],
-            "td" => ["style"]
+            "img" => %w[src alt longdesc style class],
+            "table" => ["class", "style"],
+            "th" => ["class", "style"],
+            "tr" => ["class", "style"],
+            "td" => ["class", "style"],
+            "span" => ["class", "style"],
+            "input" => ["checked", "disabled", "type", "class", "style"],
+            "ul" => ["class", "style"],
+            "li" => ["class", "style"],
+            "label" => ["class", "style"],
+            "mark" => ["class", "style"]
           ),
 
           # Add rel attribute to prevent tabnabbing

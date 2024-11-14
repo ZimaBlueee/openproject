@@ -43,7 +43,11 @@ export class FormattableDisplayField extends DisplayField {
       'op-uc-container',
       'op-uc-container_reduced-headings',
       '-multiline',
+      'ck-content',
     );
+
+    div.style.border = 'none';
+
     if (options.rtl) {
       div.classList.add('-rtl');
     }
